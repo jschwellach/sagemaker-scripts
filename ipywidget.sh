@@ -1,22 +1,24 @@
 #!/bin/bash
 
 
-echo "installing conda packages in all environments"
+echo "installing conda packages"
 sudo -u ec2-user -i <<'EOF'
 CONDA_PACKAGES=("nodejs" "ipympl" "ipywidgets")
+ENVIRONMENT=mxnet_p36
 for p in "${CONDA_PACKAGES[@]}"
 do
     echo "installing in base environment..."
     # Note that "base" is special environment name, include it there as well.
     conda install "$p" --name base --yes
-    for env in /home/ec2-user/anaconda3/envs/*; do
-        env_name=$(basename "$env")
-        if [ $env_name = 'JupyterSystemEnv' ]; then
-            continue
-        fi
-        echo "installing in $env_name environment..."
-        conda install "$p" --name "$env_name" --yes
-    done
+    conda install "$p" --name "$ENVIRONMENT" --yes
+    # for env in /home/ec2-user/anaconda3/envs/*; do
+    #     env_name=$(basename "$env")
+    #     if [ $env_name = 'JupyterSystemEnv' ]; then
+    #         continue
+    #     fi
+    #     echo "installing in $env_name environment..."
+    #     conda install "$p" --name "$env_name" --yes
+    # done
 done
 EOF
 echo "installing conda packages in all environments"
