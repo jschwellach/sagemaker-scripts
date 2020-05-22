@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -e
+
 # Install example dataset from Amazon for training and CV workshop
 echo "downloading example dataset"
 sudo -u ec2-user -i << EOF
