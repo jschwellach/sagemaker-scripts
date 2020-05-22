@@ -14,6 +14,7 @@ do
     echo "installing $e"
     jupyter labextension install "$e"
 done
+jupyter lab build
 source /home/ec2-user/anaconda3/bin/deactivate
 EOF
 echo "installing lab extensions done"
