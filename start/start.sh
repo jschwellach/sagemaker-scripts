@@ -2,22 +2,13 @@
 
 set -e
 
-# Installing matplotlib widget support and update Jupyterlab extensions so we can use ipympl
-echo "installing lab extensions"
-sudo -u ec2-user -i <<'EOF'
-LAB_EXTENSIONS=("@jupyterlab/git" "@jupyter-widgets/jupyterlab-manager")
-source /home/ec2-user/anaconda3/bin/activate JupyterSystemEnv
-pip install --upgrade pip
-pip install ipympl
-for e in "${LAB_EXTENSIONS[@]}"
-do
-    echo "installing $e"
-    jupyter labextension install "$e"
-done
-jupyter lab build
-source /home/ec2-user/anaconda3/bin/deactivate
-EOF
-echo "installing lab extensions done"
+
+echo "Fetching the ipympl script"
+wget https://raw.githubusercontent.com/jschwellach/sagemaker-scripts/master/start/ipympl.sh
+chmod +x ipympl.sh
+echo "Starting the ipympl script"
+nohup ./ipympl.sh > ipympl.out 2>&1 &
+
 
 # Installing some extra packages within the mxnet_p36 environment
 echo "installing python pip packages"
@@ -35,17 +26,12 @@ EOF
 echo "installing python pip packages done"
 
 
-# Install example dataset from Amazon for training and CV workshop
-echo "downloading example dataset"
-sudo -u ec2-user -i << EOF
-# Download dataset (if removed from tmp folder)
-BASEURL="https://d8mrh1kj01ho9.cloudfront.net/workshop/cv1/data/"
-FILES='example_dataset.pkl training_data.pkl test_data.pkl sample_model_output.csv'
-for file in $FILES; do
-  [ ! -f "/tmp/$file" ] && cd /tmp && { curl -O "$BASEURL$file" ; cd -; }
-done
-EOF
-echo "download done"
+echo "Fetching the download script"
+wget https://raw.githubusercontent.com/jschwellach/sagemaker-scripts/master/start/download.sh
+chmod +x download.sh
+echo "Starting the download script"
+nohup ./download.sh > download.out 2>&1 &
+
 
 # OVERVIEW
 # This script stops a SageMaker notebook once it's idle for more than 1 hour (default time)
